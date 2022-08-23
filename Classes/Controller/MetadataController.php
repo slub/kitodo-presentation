@@ -292,7 +292,7 @@ class MetadataController extends AbstractController
         $metadata = [];
         if ($this->settings['rootline'] < 2) {
             // Get current structure's @ID.
-            $ids = $this->document->getDoc()->getLogicalSectionsOnPage($this->requestData['page']);
+            $ids = $this->document->getDoc()->getLogicalSectionsOnPage((int) $this->requestData['page']);
 
             // Check if we should display all metadata up to the root.
             if ($this->settings['prerenderAllSections'] ?? true) {
