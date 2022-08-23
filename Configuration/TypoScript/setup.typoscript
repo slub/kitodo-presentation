@@ -49,6 +49,7 @@ page {
     kitodo-pageView-searchInDocument = EXT:dlf/Resources/Public/Javascript/PageView/SearchInDocument.js
     kitodo-pageView-pageView = EXT:dlf/Resources/Public/Javascript/PageView/PageView.js
     kitodo-pageView-navigation = EXT:dlf/Resources/Public/Javascript/PageView/Navigation.js
+    kitodo-pageView-metadata = EXT:dlf/Resources/Public/Javascript/PageView/Metadata.js
     kitodo-search-suggest = EXT:dlf/Resources/Public/Javascript/Search/Suggester.js
 
   }
