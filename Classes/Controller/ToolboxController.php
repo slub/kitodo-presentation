@@ -213,13 +213,18 @@ class ToolboxController extends AbstractController
                 $this->requestData['page'] = array_search($this->requestData['page'], $this->document->getDoc()->physicalStructure);
             }
         }
+
+        // Get @USE value of METS fileGrp.
+        $fileGrpsImageDownload = array_reverse(GeneralUtility::trimExplode(',', $this->settings['fileGrpsImageDownload']));
+
         $imageArray = [];
         // Get left or single page download.
-        $imageArray[0] = $this->getImage($this->requestData['page']);
+        $imageArray[0] = $this->getImage($this->requestData['page'], $fileGrpsImageDownload);
         if ($this->requestData['double'] == 1) {
-            $imageArray[1] = $this->getImage($this->requestData['page'] + 1);
+            $imageArray[1] = $this->getImage($this->requestData['page'] + 1, $fileGrpsImageDownload);
         }
         $this->view->assign('imageDownload', $imageArray);
+        $this->view->assign('fileGrpsImageDownload', $fileGrpsImageDownload);
     }
 
     /**
@@ -228,19 +233,19 @@ class ToolboxController extends AbstractController
      * @access protected
      *
      * @param int $page: Page number
+     * @param string[] $fileGrps File groups to consider
      *
      * @return array Array of image links and image format information
      */
-    protected function getImage($page)
+    protected function getImage($page, $fileGrps)
     {
         $image = [];
-        // Get @USE value of METS fileGrp.
-        $fileGrps = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $this->settings['fileGrpsImageDownload']);
-        while ($fileGrp = @array_pop($fileGrps)) {
+        foreach ($fileGrps as $fileGrp) {
             // Get image link.
             if (!empty($this->document->getDoc()->physicalStructureInfo[$this->document->getDoc()->physicalStructure[$page]]['files'][$fileGrp])) {
                 $image['url'] = $this->document->getDoc()->getDownloadLocation($this->document->getDoc()->physicalStructureInfo[$this->document->getDoc()->physicalStructure[$page]]['files'][$fileGrp]);
                 $image['mimetype'] = $this->document->getDoc()->getFileMimeType($this->document->getDoc()->physicalStructureInfo[$this->document->getDoc()->physicalStructure[$page]]['files'][$fileGrp]);
+                // Also see Toolbox.js
                 switch ($image['mimetype']) {
                     case 'image/jpeg':
                         $mimetypeLabel = ' (JPG)';
