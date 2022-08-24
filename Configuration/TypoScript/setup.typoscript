@@ -19,6 +19,7 @@ page {
   includeCSS {
     jPlayer = EXT:dlf/Resources/Public/Javascript/jPlayer/blue.monday/css/jplayer.blue.monday.min.css
     openLayers = EXT:dlf/Resources/Public/Javascript/OpenLayers/openlayers.css
+    kitodo = EXT:dlf/Resources/Public/Css/Kitodo.css
   }
 
   includeJSFooterlibs {
