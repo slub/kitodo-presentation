@@ -321,39 +321,21 @@ class ToolboxController extends AbstractController
      */
     protected function getPageLink()
     {
-        $page1Link = '';
-        $page2Link = '';
-        $pageLinkArray = [];
         $pageNumber = $this->requestData['page'];
-        $fileGrpsDownload = GeneralUtility::trimExplode(',', $this->extConf['fileGrpDownload']);
-        // Get image link.
-        while ($fileGrpDownload = array_shift($fileGrpsDownload)) {
-            if (!empty($this->document->getDoc()->physicalStructureInfo[$this->document->getDoc()->physicalStructure[$pageNumber]]['files'][$fileGrpDownload])) {
-                $page1Link = $this->document->getDoc()->getFileLocation($this->document->getDoc()->physicalStructureInfo[$this->document->getDoc()->physicalStructure[$pageNumber]]['files'][$fileGrpDownload]);
-                // Get second page, too, if double page view is activated.
-                if (
-                    $this->requestData['double']
-                    && $pageNumber < $this->document->getDoc()->numPages
-                    && !empty($this->document->getDoc()->physicalStructureInfo[$this->document->getDoc()->physicalStructure[$pageNumber + 1]]['files'][$fileGrpDownload])
-                ) {
-                    $page2Link = $this->document->getDoc()->getFileLocation($this->document->getDoc()->physicalStructureInfo[$this->document->getDoc()->physicalStructure[$pageNumber + 1]]['files'][$fileGrpDownload]);
-                }
-                break;
-            }
+        $pageLinkArray = [
+            $this->document->getDoc()->getPageLink($pageNumber),
+        ];
+        // Get second page, too, if double page view is activated.
+        if ($this->requestData['double'] && $pageNumber < $this->document->getDoc()->numPages) {
+            $pageLinkArray[1] = $this->document->getDoc()->getPageLink($pageNumber + 1);
         }
         if (
-            empty($page1Link)
-            && empty($page2Link)
+            empty($pageLinkArray[0])
+            && empty($pageLinkArray[1])
         ) {
             $this->logger->warning('File not found in fileGrps "' . $this->extConf['fileGrpDownload'] . '"');
         }
 
-        if (!empty($page1Link)) {
-            $pageLinkArray[0] = $page1Link;
-        }
-        if (!empty($page2Link)) {
-            $pageLinkArray[1] = $page2Link;
-        }
         return $pageLinkArray;
     }
 
