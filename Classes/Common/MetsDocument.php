@@ -272,6 +272,46 @@ final class MetsDocument extends Doc
 
     /**
      * {@inheritDoc}
+     * @see \Kitodo\Dlf\Common\Doc::getAllFiles()
+     */
+    public function getAllFiles()
+    {
+        $files = [];
+        $fileNodes = $this->mets->xpath('./mets:fileSec/mets:fileGrp/mets:file');
+        foreach ($fileNodes as $fileNode) {
+            $fileId = (string) $fileNode->attributes()->ID;
+            if (empty($fileId)) {
+                continue;
+            }
+
+            $url = null;
+            foreach ($fileNode->children('http://www.loc.gov/METS/')->FLocat as $locator) {
+                if ((string) $locator->attributes()['LOCTYPE'] === 'URL') {
+                    $url = (string) $locator->attributes('http://www.w3.org/1999/xlink')->href;
+                    break;
+                }
+            }
+
+            if ($url === null) {
+                continue;
+            }
+
+            $mimetype = (string) $fileNode->attributes()['MIMETYPE'];
+            if (empty($mimetype)) {
+                continue;
+            }
+
+            $files[$fileId] = [
+                'url' => $url,
+                'mimetype' => $mimetype,
+            ];
+
+        }
+        return $files;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Kitodo\Dlf\Common\Doc::getLogicalStructure()
      */
     public function getLogicalStructure($id, $recursive = false)
