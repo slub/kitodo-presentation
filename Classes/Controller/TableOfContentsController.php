@@ -55,6 +55,7 @@ class TableOfContentsController extends AbstractController
         $entryArray['orderlabel'] = $entry['orderlabel'];
         $entryArray['type'] = Helper::translate($entry['type'], 'tx_dlf_structures', $this->settings['storagePid']);
         $entryArray['pagination'] = htmlspecialchars($entry['pagination']);
+        $entryArray['logId'] = $entry['id'];
         $entryArray['_OVERRIDE_HREF'] = '';
         $entryArray['doNotLinkIt'] = 1;
         $entryArray['ITEM_STATE'] = 'NO';
@@ -105,6 +106,16 @@ class TableOfContentsController extends AbstractController
             $recursive === true
             && !empty($entry['children'])
         ) {
+            $entryArray['isAlwaysExpanded'] = (
+                is_string($entry['points'])
+                || empty($this->document->getDoc()->smLinks['l2p'][$entry['id']])
+            );
+
+            $entryArray['isCurrentlyExpanded'] = (
+                $entryArray['ITEM_STATE'] == 'CUR'
+                || $entryArray['isAlwaysExpanded']
+            );
+
             // Build sub-menu only if one of the following conditions apply:
             // 0. Configuration says that the full menu should be rendered
             // 1. Current menu node is in rootline
@@ -112,9 +123,7 @@ class TableOfContentsController extends AbstractController
             // 3. Current menu node has no corresponding images
             if (
                 $this->settings['showFull']
-                || $entryArray['ITEM_STATE'] == 'CUR'
-                || is_string($entry['points'])
-                || empty($this->document->getDoc()->smLinks['l2p'][$entry['id']])
+                || $entryArray['isCurrentlyExpanded']
             ) {
                 $entryArray['_SUB_MENU'] = [];
                 foreach ($entry['children'] as $child) {
