@@ -164,7 +164,7 @@ class PageViewController extends AbstractController
      */
     protected function addViewerJS()
     {
-        // TODO avoid redundancy to documentController
+        // TODO(client-side): Avoid redundancy to DocumentController
         $imageFileGroups = array_reverse(GeneralUtility::trimExplode(',', $this->extConf['fileGrpImages']));
         $fulltextFileGroups = GeneralUtility::trimExplode(',', $this->extConf['fileGrpFulltext']);
         $config = [
